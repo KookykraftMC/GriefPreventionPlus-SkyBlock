@@ -3,10 +3,13 @@ package net.kaikk.mc.gpp.skyblock;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -98,6 +101,14 @@ class EventListener implements Listener {
 				event.setTo(loc);
 				event.useTravelAgent(false);
 			}
+		}
+	}
+	
+	@EventHandler
+	void onPlayerInteract(PlayerInteractEvent event) {
+		if (event.getAction()==Action.RIGHT_CLICK_BLOCK && event.getPlayer().getItemInHand().getType()==Material.BUCKET && event.getClickedBlock().getType()==Material.OBSIDIAN && event.getPlayer().hasPermission("gppskyblock.lava")) {
+			event.getClickedBlock().setType(Material.AIR);
+			event.getPlayer().getItemInHand().setType(Material.LAVA_BUCKET);
 		}
 	}
 	
