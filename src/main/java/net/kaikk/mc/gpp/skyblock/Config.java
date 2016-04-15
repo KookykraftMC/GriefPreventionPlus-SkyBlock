@@ -20,8 +20,8 @@ public class Config {
 	
 	Config(JavaPlugin instance) {
 		this.instance = instance;
-		instance.getConfig().options().copyDefaults(true);
 		instance.saveDefaultConfig();
+		instance.reloadConfig();
 		
 		this.worldName=instance.getConfig().getString("WorldName");
 		this.schematic=instance.getConfig().getString("Schematic");
