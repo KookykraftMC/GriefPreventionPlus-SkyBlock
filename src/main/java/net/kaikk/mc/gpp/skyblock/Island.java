@@ -82,7 +82,8 @@ public class Island {
 		int size = this.claim.getArea();		
 		GriefPreventionPlus.getInstance().getDataStore().resizeClaim(this.claim, center.getBlockX()-radius, center.getBlockZ()-radius, center.getBlockX()+radius, center.getBlockZ()+radius, null);
 		PlayerData playerData = GriefPreventionPlus.getInstance().getDataStore().getPlayerData(ownerId);
-		playerData.setAccruedClaimBlocks(playerData.getAccruedClaimBlocks()+(this.claim.getArea()-size));
+		playerData.setBonusClaimBlocks(playerData.getBonusClaimBlocks()+(this.claim.getArea()-size));
+		GriefPreventionPlus.getInstance().getDataStore().savePlayerData(ownerId, playerData);
 	}
 	
 	public Location getCenter() {

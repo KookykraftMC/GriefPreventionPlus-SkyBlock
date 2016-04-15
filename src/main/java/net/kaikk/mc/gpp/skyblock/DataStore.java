@@ -91,8 +91,9 @@ class DataStore {
 		
 		World world = Bukkit.getWorld(instance.config().worldName);
 		PlayerData playerData = GriefPreventionPlus.getInstance().getDataStore().getPlayerData(uuid);
-		playerData.setAccruedClaimBlocks(playerData.getAccruedClaimBlocks()+(((instance.config().radius*2)+1)*2));
+		playerData.setBonusClaimBlocks(playerData.getBonusClaimBlocks()+(((instance.config().radius*2)+1)*2));
 		ClaimResult result = GriefPreventionPlus.getInstance().getDataStore().newClaim(world.getUID(), bx+255-instance.config().radius, bz+255-instance.config().radius, bx+255+instance.config().radius, bz+255+instance.config().radius, uuid, null, null, null);
+		GriefPreventionPlus.getInstance().getDataStore().savePlayerData(uuid, playerData);
 		if (result.getResult()!=Result.SUCCESS) {
 			throw new Exception(result.getReason());
 		}
