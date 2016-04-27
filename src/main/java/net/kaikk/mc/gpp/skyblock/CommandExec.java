@@ -65,7 +65,9 @@ public class CommandExec implements CommandExecutor {
 				ChatColor.AQUA + "/" + label + " spawn [PlayerName] - teleports to your island or the specified player's island\n" +
 				ChatColor.AQUA + "/" + label + " setspawn - sets your island's spawn at your current location\n" +
 				ChatColor.AQUA + "/" + label + " setbiome (island|chunk|block) [biome] - sets the biome of your island\n" +
-				ChatColor.AQUA + "/" + label + " biomelist - list allowed biomes that can be used with setbiome";
+				ChatColor.AQUA + "/" + label + " biomelist - list allowed biomes that can be used with setbiome\n" +
+				ChatColor.RED + "You can use almost all GriefPreventionPlus commands on your island, like /trust [PlayerName].\n" +
+				(Bukkit.getPluginManager().isPluginEnabled("GPPCities") ? ChatColor.RED + "GriefPreventionPlus-Cities is supported. Use '/city help' for more info." : "");
 	}
 	
 	@SuppressWarnings("deprecation")
