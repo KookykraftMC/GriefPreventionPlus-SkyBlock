@@ -92,7 +92,7 @@ public class Island {
 	}
 	
 	public void teleportEveryoneToSpawn() {
-		Location spawnLocation = Bukkit.getWorld(GPPSkyBlock.getInstance().config().worldName).getSpawnLocation();
+		Location spawnLocation = GPPSkyBlock.getInstance().getSpawn();
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (this.getClaim().contains(player.getLocation(), true, false)) {
 				player.teleport(spawnLocation);

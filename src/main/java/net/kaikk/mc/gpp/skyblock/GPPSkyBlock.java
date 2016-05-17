@@ -1,5 +1,7 @@
 package net.kaikk.mc.gpp.skyblock;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class GPPSkyBlock extends JavaPlugin {
@@ -37,5 +39,9 @@ public class GPPSkyBlock extends JavaPlugin {
 
 	public DataStore dataStore() {
 		return dataStore;
+	}
+	
+	public Location getSpawn() {
+		return Bukkit.getWorld(this.config().worldName).getSpawnLocation();
 	}
 }
