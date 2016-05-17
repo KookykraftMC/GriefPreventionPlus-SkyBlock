@@ -31,17 +31,15 @@ public class ResetIslandTask extends BukkitRunnable {
 	private Island island;
 	private String ownerName;
 	private int x, z, lz, gx, gz;
+	private Stage stage;
 
 	public ResetIslandTask(Island island, File schematic) {
 		this.island = island;
 		this.schematic = schematic;
+		this.stage = Stage.REGEN;
 
-		this.lz = island.getClaim().getLesserBoundaryCorner().getBlockZ()>>4;
-		this.x = island.getClaim().getLesserBoundaryCorner().getBlockX()>>4;
-		this.z = lz;
-		this.gx = island.getClaim().getGreaterBoundaryCorner().getBlockX()>>4;
-		this.gz = island.getClaim().getGreaterBoundaryCorner().getBlockZ()>>4;
-
+		this.initCoords();
+		
 		ownerName = island.getOwnerName();
 		
 		if (island.isOwnerOnline()) {
@@ -52,78 +50,125 @@ public class ResetIslandTask extends BukkitRunnable {
 
 	@Override
 	public void run() {
-		for (int i = 0; i<8; i++) {
-			if (x <= gx) {
-				if (z <= gz) {
-					try {
-						island.getClaim().getWorld().loadChunk(x, z, false);
-						island.getClaim().getWorld().regenerateChunk(x, z);
-					} catch (Exception e) {
-						if (island.isOwnerOnline()) {
-							island.getPlayer().sendMessage(ChatColor.RED+"An error occurred while generating a new island: regen error.");
+		switch(this.stage) {
+			case REGEN: {
+				for (int i = 0; i<8; i++) {
+					if (x <= gx) {
+						if (z <= gz) {
+							try {
+								island.getClaim().getWorld().loadChunk(x, z, true);
+								island.getClaim().getWorld().regenerateChunk(x, z);
+							} catch (Exception e) {
+								if (island.isOwnerOnline()) {
+									island.getPlayer().sendMessage(ChatColor.RED+"An error occurred while generating a new island: regen error.");
+								}
+								Bukkit.getLogger().info("An error occurred while generating "+ownerName+" island");
+								e.printStackTrace();
+								this.cancel();
+								return;
+							}
+							z++;
+						} else {
+							this.z = lz;
+							x++;
 						}
-						Bukkit.getLogger().info("An error occurred while generating "+ownerName+" island");
-						e.printStackTrace();
-						this.cancel();
+					} else {
+						this.stage = Stage.SCHEMATIC;
 						return;
 					}
-					z++;
-				} else {
-					this.z = lz;
-					x++;
 				}
-			} else {
-				this.cancel();
+				
+				return;
+			}
+			case SCHEMATIC: {
 				Bukkit.getLogger().info(ownerName+" island regeneration complete.");
 				try {
 					// read schematic file
 					FileInputStream fis = new FileInputStream(schematic);
 					BufferedInputStream bis = new BufferedInputStream(fis);
 					ClipboardReader reader = ClipboardFormat.SCHEMATIC.getReader(bis);
-
+		
 					// create clipboard
 					WorldData worldData = LegacyWorldData.getInstance();
 					Clipboard clipboard = reader.read(worldData);
 					fis.close();
-
+		
 					ClipboardHolder clipboardHolder = new ClipboardHolder(clipboard, worldData);
 					EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession((World) new BukkitWorld(island.getClaim().getWorld()), 1000000);
-
+		
 					try {
 						island.setSpawn(island.getCenter());
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
-
+		
 					island.getSpawn().getChunk().load();
-
+		
 					Vector vector = BukkitUtil.toVector(island.getSpawn());
 					Operation operation = clipboardHolder.createPaste(editSession, LegacyWorldData.getInstance()).to(vector).ignoreAirBlocks(true).build();
 					Operations.completeLegacy(operation);
 					
 					Bukkit.getLogger().info(ownerName+" island schematic load complete.");
-
+		
 					if (GPPSkyBlock.getInstance().config().defaultBiome != null) {
 						island.setIslandBiome(GPPSkyBlock.getInstance().config().defaultBiome);
 						Bukkit.getLogger().info(ownerName+" island biome set to default biome ("+GPPSkyBlock.getInstance().config().defaultBiome.toString()+")");
 					}
-
-					island.ready = true;
-					if (island.isOwnerOnline()) {
-						island.getPlayer().sendMessage(ChatColor.GREEN+"Island generation complete.");
-						island.getPlayer().sendMessage(ChatColor.RED+"WARNING: Be sure to use a full block for your island spawn. Do not use slabs!");
-						island.getPlayer().teleport(island.getSpawn());
-					}
-
-					Bukkit.getLogger().info(ownerName+" island reset completed.");
+					
+					this.stage = Stage.UNLOADCHUNKS;
+					this.initCoords();
 				} catch (MaxChangedBlocksException | IOException e) {
 					if (island.isOwnerOnline()) {
 						island.getPlayer().sendMessage(ChatColor.RED+"An error occurred while generating a new island: schematic load error.");
 					}
+					this.cancel();
 					e.printStackTrace();
 				}
 				return;
 			}
+			case UNLOADCHUNKS: {
+				for (int i = 0; i<8; i++) {
+					if (x <= gx) {
+						if (z <= gz) {
+							island.getClaim().getWorld().unloadChunk(x, z);
+							z++;
+						} else {
+							this.z = lz;
+							x++;
+						}
+					} else {
+						this.stage = Stage.COMPLETED;
+						return;
+					}
+				}
+				
+				return;
+			}
+			case COMPLETED: {
+				island.ready = true;
+				if (island.isOwnerOnline()) {
+					island.getPlayer().sendMessage(ChatColor.GREEN+"Island generation complete. You will be teleported shortly.");
+					island.getPlayer().sendMessage(ChatColor.RED+"WARNING: Be sure to use a full block for your island spawn. Do not use slabs!");
+					
+					island.getPlayer().teleport(island.getSpawn());
+				}
+		
+				Bukkit.getLogger().info(ownerName+" island reset completed.");
+				this.cancel();
+				return;
+			}
 		}
+	}
+	
+	private void initCoords() {
+		this.lz = island.getClaim().getLesserBoundaryCorner().getBlockZ()>>4;
+		this.x = island.getClaim().getLesserBoundaryCorner().getBlockX()>>4;
+		this.z = lz;
+		this.gx = island.getClaim().getGreaterBoundaryCorner().getBlockX()>>4;
+		this.gz = island.getClaim().getGreaterBoundaryCorner().getBlockZ()>>4;
+	}
+	
+	enum Stage {
+		REGEN, SCHEMATIC, UNLOADCHUNKS, COMPLETED;
 	}
 }
