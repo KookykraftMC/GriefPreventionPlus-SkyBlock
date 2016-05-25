@@ -24,3 +24,5 @@ permissions:
         default: op
     gppskyblock.override:
         default: op
+    gppskyblock.leaveisland:
+        default: true
