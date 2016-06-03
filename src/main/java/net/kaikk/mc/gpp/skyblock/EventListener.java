@@ -40,8 +40,6 @@ class EventListener implements Listener {
 					return;
 				}
 			}
-			
-			event.getPlayer().teleport(island.getSpawn());
 		}
 	}
 	
