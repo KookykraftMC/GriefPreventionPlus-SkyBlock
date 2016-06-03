@@ -85,8 +85,6 @@ public class CommandExec implements CommandExecutor {
 		Player player = (Player) sender;
 		Island island = null;
 		
-		int countdown = 5;
-		
 		if (args.length>1) {
 			OfflinePlayer oPlayer = Bukkit.getOfflinePlayer(args[1]);
 			island = this.instance.dataStore().getIsland(oPlayer.getUniqueId());
@@ -119,8 +117,8 @@ public class CommandExec implements CommandExecutor {
 			return false;
 		}
 
-		sender.sendMessage(ChatColor.GREEN+"You'll be teleported in "+countdown+" seconds. Do not move.");
-		SpawnTeleportTask.TeleportTask(player, island, countdown);
+		sender.sendMessage(ChatColor.GREEN+"You'll be teleported in "+instance.config().tpCountdown+" seconds. Do not move.");
+		SpawnTeleportTask.TeleportTask(player, island, instance.config().tpCountdown);
 		
 		return true;
 	}

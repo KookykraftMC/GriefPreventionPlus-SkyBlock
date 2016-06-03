@@ -13,6 +13,9 @@ YLevel: 64
 # New players will be automatically teleported to their island upon login
 NewbiesAutoSpawn: false
 
+# Teleport countdown in seconds
+TPCountdown: 5
+
 # Configuration for MySQL
 MySQL:
   Hostname: localhost
