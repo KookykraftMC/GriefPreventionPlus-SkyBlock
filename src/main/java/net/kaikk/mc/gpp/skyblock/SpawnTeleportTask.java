@@ -20,7 +20,9 @@ public class SpawnTeleportTask extends BukkitRunnable {
 
 	@Override
 	public void run() {
-		island.getSpawn().getChunk().load();
+		if (!island.getSpawn().getChunk().load()) {
+			return;
+		}
 		if (countdown>0) {
 			try {
 				if (this.location.distanceSquared(location)>0) {
