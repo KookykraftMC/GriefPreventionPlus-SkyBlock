@@ -40,6 +40,8 @@ public class CommandExec implements CommandExecutor {
 			case "reset":
 			case "restart":
 				return reset(sender, label, args);
+			case "invite":
+				return invite(sender);
 			case "setspawn":
 			case "sethome":
 				return setSpawn(sender, label, args);
@@ -329,6 +331,12 @@ public class CommandExec implements CommandExecutor {
 		}
 		
 		sender.sendMessage(sb.substring(0, sb.length()-2).toString());
+		return true;
+	}
+
+	private boolean invite(CommandSender sender) {
+		String inviteMsg = (ChatColor.GREEN + "To 'invite' a player to your island, /trust them to your island, and have them /tpa to your");
+		sender.sendMessage(inviteMsg);
 		return true;
 	}
 }
