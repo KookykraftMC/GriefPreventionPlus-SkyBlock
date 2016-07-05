@@ -47,7 +47,7 @@ class EventListener implements Listener {
 	
 	@EventHandler	
 	void onClaimExit(ClaimExitEvent event) {
-		if (event.getPlayer().hasPermission("gppskyblock.override")) {
+		if (event.getPlayer().hasPermission("gppskyblock.override") || event.getPlayer().hasPermission("gppskyblock.leaveisland")) {
 			return;
 		}
 		
