@@ -42,7 +42,7 @@ public class CommandExec implements CommandExecutor {
 				return reset(sender, label, args);
 			case "trust":
 			case "invite":
-				return invite(sender, label, args);
+				return invite(sender, args);
 			case "setspawn":
 			case "sethome":
 				return setSpawn(sender, label, args);
@@ -336,7 +336,7 @@ public class CommandExec implements CommandExecutor {
 		return true;
 	}
 
-	private boolean invite(CommandSender sender, String label, String[] args) {
+	private boolean invite(CommandSender sender, String[] args) {
 		Player p = (Player) sender;
 		p.sendMessage(ChatColor.GREEN + "Trusting " + args[1] + " to build on this island...");
 		p.performCommand("trust " + args[1]);
