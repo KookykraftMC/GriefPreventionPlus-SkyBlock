@@ -40,8 +40,9 @@ public class CommandExec implements CommandExecutor {
 			case "reset":
 			case "restart":
 				return reset(sender, label, args);
+			case "trust":
 			case "invite":
-				return invite(sender);
+				return invite(sender, label, args);
 			case "setspawn":
 			case "sethome":
 				return setSpawn(sender, label, args);
@@ -68,6 +69,7 @@ public class CommandExec implements CommandExecutor {
 				ChatColor.AQUA + "/" + label + " setspawn - sets your island's spawn at your current location\n" +
 				ChatColor.AQUA + "/" + label + " setbiome (island|chunk|block) [biome] - sets the biome of your island\n" +
 				ChatColor.AQUA + "/" + label + " biomelist - list allowed biomes that can be used with setbiome\n" +
+				ChatColor.AQUA + "/" + label + " invite [playername] - Adds a player to your island and tells them how to get to your island." +
 				ChatColor.RED + "You can use almost all GriefPreventionPlus commands on your island, like /trust [PlayerName].\n" +
 				(Bukkit.getPluginManager().isPluginEnabled("GPPCities") ? ChatColor.RED + "GriefPreventionPlus-Cities is supported. Use '/city help' for more info." : "");
 	}
@@ -334,9 +336,15 @@ public class CommandExec implements CommandExecutor {
 		return true;
 	}
 
-	private boolean invite(CommandSender sender) {
-		String inviteMsg = (ChatColor.GREEN + "To 'invite' a player to your island, /trust them to your island, and have them /tpa to your");
-		sender.sendMessage(inviteMsg);
+	private boolean invite(CommandSender sender, String label, String[] args) {
+		Player p = (Player) sender;
+		p.sendMessage(ChatColor.GREEN + "Trusting " + args[1] + " to build on this island...");
+		p.performCommand("trust " + args[1]);
+		OfflinePlayer offP = Bukkit.getOfflinePlayer(args[1]);
+		if (offP.isOnline()) {
+			Player o = (Player) offP;
+			o.sendMessage(ChatColor.GREEN + "Hey! " + p.getName() + " has invited you to their island! To teleport to them, do /tpa " + sender.getName() + ". Be sure to /setspawn when you get there!");
+		}
 		return true;
 	}
 }
