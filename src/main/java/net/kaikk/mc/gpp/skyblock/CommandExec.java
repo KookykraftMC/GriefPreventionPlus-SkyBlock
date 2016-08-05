@@ -337,6 +337,11 @@ public class CommandExec implements CommandExecutor {
 	}
 
 	private boolean invite(CommandSender sender, String[] args) {
+		if (!(sender instanceof Player)) {
+			sender.sendMessage(ChatColor.RED+"Only players can run this command.");
+			return false;
+		}
+		
 		//cast sender to player
 		Player p = (Player) sender;
 		
