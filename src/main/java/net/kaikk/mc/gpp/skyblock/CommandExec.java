@@ -44,7 +44,7 @@ public class CommandExec implements CommandExecutor {
 				return reset(sender, label, args);
 			case "trust":
 			case "invite":
-				return invite(sender, args);
+				return invite(sender, label, args);
 			case "setspawn":
 			case "sethome":
 				return setSpawn(sender, label, args);
@@ -336,9 +336,14 @@ public class CommandExec implements CommandExecutor {
 		return true;
 	}
 
-	private boolean invite(CommandSender sender, String[] args) {
+	private boolean invite(CommandSender sender, String label, String[] args) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(ChatColor.RED+"Only players can run this command.");
+			return false;
+		}
+		
+		if (args.length<2) {
+			sender.sendMessage(ChatColor.RED + "/" + label + " invite (PlayerName) - Adds a player to your island and tells them how to get to your island.");
 			return false;
 		}
 		
