@@ -359,7 +359,7 @@ public class CommandExec implements CommandExecutor {
 			//add them to the island's claim
 			claim.setPermission(offP.getUniqueId(), ClaimPermission.BUILD);
 
-			p.sendMessage(ChatColor.GREEN + args[1] + " has been invited to your island.");
+			//p.sendMessage(ChatColor.GREEN + args[1] + " has been invited to your island.");
 
 			//if they're online tell them they have been invited to the island.
 			if (offP.isOnline()) {
@@ -367,6 +367,8 @@ public class CommandExec implements CommandExecutor {
 				o.sendMessage(ChatColor.GREEN + "Hey! " + p.getName() + " has invited you to their island! To teleport to them, do /tpa " + sender.getName() + ". Be sure to /sethome when you get there!");
 			}
 		}
+
+		p.sendMessage(ChatColor.GREEN + args[1] + " has been invited to your island.");
 		return true;
 	}
 }
