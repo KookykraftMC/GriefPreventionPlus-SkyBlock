@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import net.kaikk.mc.gpp.Claim;
+import net.kaikk.mc.gpp.ClaimPermission;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -40,6 +42,9 @@ public class CommandExec implements CommandExecutor {
 			case "reset":
 			case "restart":
 				return reset(sender, label, args);
+			case "trust":
+			case "invite":
+				return invite(sender, args);
 			case "setspawn":
 			case "sethome":
 				return setSpawn(sender, label, args);
@@ -66,6 +71,7 @@ public class CommandExec implements CommandExecutor {
 				ChatColor.AQUA + "/" + label + " setspawn - sets your island's spawn at your current location\n" +
 				ChatColor.AQUA + "/" + label + " setbiome (island|chunk|block) [biome] - sets the biome of your island\n" +
 				ChatColor.AQUA + "/" + label + " biomelist - list allowed biomes that can be used with setbiome\n" +
+				ChatColor.AQUA + "/" + label + " invite [playername] - Adds a player to your island and tells them how to get to your island.\n" +
 				ChatColor.RED + "You can use almost all GriefPreventionPlus commands on your island, like /trust [PlayerName].\n" +
 				(Bukkit.getPluginManager().isPluginEnabled("GPPCities") ? ChatColor.RED + "GriefPreventionPlus-Cities is supported. Use '/city help' for more info." : "");
 	}
@@ -329,6 +335,40 @@ public class CommandExec implements CommandExecutor {
 		}
 		
 		sender.sendMessage(sb.substring(0, sb.length()-2).toString());
+		return true;
+	}
+
+	private boolean invite(CommandSender sender, String[] args) {
+		//cast sender to player
+		Player p = (Player) sender;
+		//get the player's island
+		Island is = this.instance.dataStore().getIsland(p.getUniqueId());
+		//if the island doesn't exist, don't continue
+		if (is == null) {
+			p.sendMessage(ChatColor.RED + "You do not have an island.");
+			return false;
+		}
+		//get the island's claim
+		Claim claim = is.getClaim();
+
+		//get the player to be trusted
+		OfflinePlayer offP = Bukkit.getOfflinePlayer(args[1]);
+
+		//if the player has played before, trust them to the island
+		if(offP.hasPlayedBefore()) {
+			//add them to the island's claim
+			claim.setPermission(offP.getUniqueId(), ClaimPermission.BUILD);
+
+			//p.sendMessage(ChatColor.GREEN + args[1] + " has been invited to your island.");
+
+			//if they're online tell them they have been invited to the island.
+			if (offP.isOnline()) {
+				Player o = (Player) offP;
+				o.sendMessage(ChatColor.GREEN + "Hey! " + p.getName() + " has invited you to their island! To teleport to them, do /tpa " + sender.getName() + ". Be sure to /sethome when you get there!");
+			}
+		}
+
+		p.sendMessage(ChatColor.GREEN + args[1] + " has been invited to your island.");
 		return true;
 	}
 }
