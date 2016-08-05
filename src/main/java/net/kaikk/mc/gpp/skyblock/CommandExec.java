@@ -366,18 +366,20 @@ public class CommandExec implements CommandExecutor {
 		OfflinePlayer offP = Bukkit.getOfflinePlayer(args[1]);
 
 		//if the player has played before, trust them to the island
-		if (offP.hasPlayedBefore()) {
-			//add them to the island's claim
-			claim.setPermission(offP.getUniqueId(), ClaimPermission.BUILD);
-
-			//if they're online tell them they have been invited to the island.
-			if (offP.isOnline()) {
-				Player o = (Player) offP;
-				o.sendMessage(ChatColor.GREEN + "Hey! " + p.getName() + " has invited you to their island! To teleport to them, do /is spawn " + sender.getName());
-			}
+		if (offP.getLastPlayed()==0) {
+			p.sendMessage(ChatColor.RED + "The specified player has never played on this server.");
+			return false;
 		}
+		
+		//add them to the island's claim
+		claim.setPermission(offP.getUniqueId(), ClaimPermission.BUILD);
 
-		p.sendMessage(ChatColor.GREEN + args[1] + " has been invited to your island.");
+		//if they're online tell them they have been invited to the island.
+		if (offP.isOnline()) {
+			((Player) offP).sendMessage(ChatColor.GREEN + "Hey! " + p.getName() + " has invited you to their island! To teleport to them, do /is spawn " + sender.getName());
+			p.sendMessage(ChatColor.GREEN + offP.getName() + " has been invited to your island.");
+		}
+		
 		return true;
 	}
 }
