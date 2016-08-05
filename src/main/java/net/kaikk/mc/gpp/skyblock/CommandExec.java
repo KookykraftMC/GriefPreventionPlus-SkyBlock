@@ -377,8 +377,8 @@ public class CommandExec implements CommandExecutor {
 		//if they're online tell them they have been invited to the island.
 		if (offP.isOnline()) {
 			((Player) offP).sendMessage(ChatColor.GREEN + "Hey! " + p.getName() + " has invited you to their island! To teleport to them, do /is spawn " + sender.getName());
-			p.sendMessage(ChatColor.GREEN + offP.getName() + " has been invited to your island.");
 		}
+		p.sendMessage(ChatColor.GREEN + offP.getName() + " has been invited to your island.");
 		
 		return true;
 	}
