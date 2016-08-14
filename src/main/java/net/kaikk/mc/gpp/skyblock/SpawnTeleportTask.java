@@ -20,20 +20,26 @@ public class SpawnTeleportTask extends BukkitRunnable {
 
 	@Override
 	public void run() {
-		island.getSpawn().getChunk().load();
-		if (countdown>0) {
-			try {
-				if (this.location.distanceSquared(location)>0) {
-					player.sendMessage(ChatColor.RED+"Teleport cancelled");
-					this.cancel();
-					return;
-				}
-			} catch (IllegalStateException e) {
+		if (!island.getSpawn().getChunk().load()) {
+			return;
+		}
+		if (!player.isOnline()) {
+			this.cancel();
+			return;
+		}
+		try {
+			if (this.location.distanceSquared(location)>0) {
 				player.sendMessage(ChatColor.RED+"Teleport cancelled");
 				this.cancel();
 				return;
 			}
-		} else {
+		} catch (IllegalStateException e) {
+			player.sendMessage(ChatColor.RED+"Teleport cancelled");
+			this.cancel();
+			return;
+		}
+		
+		if (countdown<=0) {
 			player.teleport(island.getSpawn());
 			if (countdown<-4) {
 				this.cancel();

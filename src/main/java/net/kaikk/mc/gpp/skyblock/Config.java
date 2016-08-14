@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Config {
 	public String dbHostname, dbUsername, dbPassword, dbDatabase, worldName, schematic;
-	public int nextRegionX = 1, nextRegionZ = 1, radius, yLevel;
+	public int nextRegionX = 1, nextRegionZ = 1, radius, yLevel, tpCountdown;
 	public boolean autoSpawn;
 	public Biome defaultBiome;
 	public List<Biome> allowedBiomes = new ArrayList<Biome>();
@@ -67,6 +67,8 @@ public class Config {
 				allowedBiomes.add(biome);
 			}
 		}
+		
+		this.tpCountdown=instance.getConfig().getInt("TPCountdown", 5);
 		
 		// Messages
 		/*saveResource("messages.yml");
