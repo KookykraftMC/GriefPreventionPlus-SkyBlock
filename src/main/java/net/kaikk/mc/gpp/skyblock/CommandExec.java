@@ -52,6 +52,8 @@ public class CommandExec implements CommandExecutor {
 				return setBiome(sender, label, args);
 			case "biomelist":
 				return biomeList(sender);
+			case "lock":
+				return lock(sender);
 			case "setradius":
 				return setRadius(sender, label, args);
 			}
@@ -72,6 +74,7 @@ public class CommandExec implements CommandExecutor {
 				ChatColor.AQUA + "/" + label + " setbiome (island|chunk|block) [biome] - sets the biome of your island\n" +
 				ChatColor.AQUA + "/" + label + " biomelist - list allowed biomes that can be used with setbiome\n" +
 				ChatColor.AQUA + "/" + label + " invite [playername] - Adds a player to your island and tells them how to get to your island.\n" +
+				ChatColor.AQUA + "/" + label + " lock - Prevents other players besides the ones you have trusted to your island, by default anyone can go to your island." +
 				ChatColor.RED + "You can use almost all GriefPreventionPlus commands on your island, like /trust [PlayerName].\n" +
 				(Bukkit.getPluginManager().isPluginEnabled("GPPCities") ? ChatColor.RED + "GriefPreventionPlus-Cities is supported. Use '/city help' for more info." : "");
 	}
@@ -380,6 +383,35 @@ public class CommandExec implements CommandExecutor {
 		}
 		p.sendMessage(ChatColor.GREEN + offP.getName() + " has been invited to your island.");
 		
+		return true;
+	}
+
+	private boolean lock(CommandSender sender) {
+		if (!(sender instanceof Player)) {
+			sender.sendMessage(ChatColor.RED+"Only players can run this command.");
+			return false;
+		}
+
+		//cast sender to player
+		Player p = (Player) sender;
+
+		//get the player's island
+		Island is = this.instance.dataStore().getIsland(p.getUniqueId());
+
+		//if the island doesn't exist, don't continue
+		if (is == null) {
+			p.sendMessage(ChatColor.RED + "You do not have an island.");
+			return false;
+		}
+
+		//get the island's claim
+		Claim claim = is.getClaim();
+
+		claim.setPermission(p.getUniqueId(), ClaimPermission.ENTRY);
+
+		p.sendMessage(ChatColor.GREEN + "Now only you and whoever else you have /entrytrust'd can enter you island.");
+		p.sendMessage(claim.getTrustList());
+		p.sendMessage(ChatColor.GREEN + "The above list are the players you currently have trusted.");
 		return true;
 	}
 }
