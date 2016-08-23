@@ -113,7 +113,7 @@ class DataStore {
 		
 		island.reset();
 
-        if (GPPSkyBlock.isESSEnabled()) {
+        if (instance.isESSEnabled()) {
             EssentialsHelper.createHome(uuid, island.getSpawn());
         }
 		

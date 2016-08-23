@@ -47,7 +47,7 @@ public class GPPSkyBlock extends JavaPlugin {
 		return Bukkit.getWorld(this.config().worldName).getSpawnLocation();
 	}
 
-	public static boolean isESSEnabled() {
-	    return this.getServer().getPluginManager().isPluginEnabled("Essentials");
+	public boolean isESSEnabled() {
+	    return getServer().getPluginManager().isPluginEnabled("Essentials");
     }
 }
