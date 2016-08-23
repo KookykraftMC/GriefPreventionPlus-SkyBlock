@@ -27,6 +27,8 @@ public class GPPSkyBlock extends JavaPlugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+
 	}
 
 	public static GPPSkyBlock getInstance() {
@@ -44,4 +46,8 @@ public class GPPSkyBlock extends JavaPlugin {
 	public Location getSpawn() {
 		return Bukkit.getWorld(this.config().worldName).getSpawnLocation();
 	}
+
+	public static boolean isESSEnabled() {
+	    return this.getServer().getPluginManager().isPluginEnabled("Essentials");
+    }
 }

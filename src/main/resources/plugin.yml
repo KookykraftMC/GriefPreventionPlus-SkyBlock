@@ -3,6 +3,7 @@ main: ${package}.${name}
 version: ${version}
 author: KaiNoMood
 depend: [GriefPreventionPlus, WorldEdit]
+softdepend: [Essentials]
 
 commands:
    GPPSkyBlock:
